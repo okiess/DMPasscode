@@ -189,8 +189,9 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                 NSError *errorMatchingPins = [NSError errorWithDomain:DMUnlockErrorDomain code:DMErrorUnlocking userInfo:nil];
                 // [self closeAndNotify:NO withError:errorMatchingPins];
                 [NSThread sleepForTimeInterval: 5.0];
-                _count = -1;
-                [self openPasscodeWithMode:1 viewController:viewController];
+                [_passcodeViewController reset];
+                _count = 0;
+                return;
             }
         }
     }
