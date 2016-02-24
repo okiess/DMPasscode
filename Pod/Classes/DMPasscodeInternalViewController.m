@@ -45,7 +45,7 @@
                                                                     NSForegroundColorAttributeName: _config.navigationBarTitleColor};
     self.title = _config.navigationBarTitle;
 
-    if (_config.titleImageView != nil) {
+    if (_config.titleView != nil) {
       self.navigationItem.titleView = _config.titleView;
     }
 
