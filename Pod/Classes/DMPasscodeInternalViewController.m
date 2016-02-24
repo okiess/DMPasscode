@@ -46,7 +46,7 @@
     self.title = _config.navigationBarTitle;
 
     if (_config.titleImageView != nil) {
-      self.navigationItem.titleView = _config.titleImageView;
+      self.navigationItem.titleView = _config.titleView;
     }
 
     _instructions.frame = CGRectMake(0, 85, self.view.frame.size.width, 30);
