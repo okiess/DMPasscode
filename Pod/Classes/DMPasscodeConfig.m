@@ -28,6 +28,7 @@
         self.navigationBarTitle = @"";
         self.navigationBarFont = [UIFont systemFontOfSize:16];
         self.navigationBarTitleColor = [UIColor darkTextColor];
+        self.titleImageView = nil;
     }
     return self;
 }

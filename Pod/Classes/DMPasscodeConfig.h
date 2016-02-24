@@ -91,4 +91,6 @@
  */
 @property (nonatomic, strong) UIColor * navigationBarTitleColor;
 
+@property (nonatomic, strong) UIImageView * titleImageView;
+
 @end

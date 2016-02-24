@@ -45,6 +45,10 @@
                                                                     NSForegroundColorAttributeName: _config.navigationBarTitleColor};
     self.title = _config.navigationBarTitle;
 
+    if (_config.titleImageView != nil) {
+      self.navigationItem.titleView = _config.titleImageView;
+    }
+
     _instructions.frame = CGRectMake(0, 85, self.view.frame.size.width, 30);
     _instructions.font = _config.instructionsFont;
     _instructions.textColor = _config.descriptionColor;
