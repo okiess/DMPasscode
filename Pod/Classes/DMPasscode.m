@@ -95,10 +95,12 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                 if (error) {
                     switch (error.code) {
                         case LAErrorUserCancel:
-                            _completion(NO, nil);
+                            // _completion(NO, nil);
+                            [[NSNotificationCenter defaultCenter] postNotificationName:"TOUCHID_CANCELED" object:nil];
                             break;
                         case LAErrorSystemCancel:
-                            _completion(NO, nil);
+                            [[NSNotificationCenter defaultCenter] postNotificationName:"TOUCHID_CANCELED" object:nil];
+                            // _completion(NO, nil);
                             break;
                         case LAErrorAuthenticationFailed:
                             _completion(NO, error);
