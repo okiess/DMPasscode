@@ -60,4 +60,6 @@ typedef NS_ENUM(NSInteger, DMUnlockErrorCodes)
  */
 + (void)setConfig:(DMPasscodeConfig *)config;
 
+-(void) handleEnteredBackground;
+
 @end
