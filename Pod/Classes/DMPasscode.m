@@ -40,11 +40,6 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
     [super initialize];
     instance = [[DMPasscode alloc] init];
     bundle = [DMPasscode bundleWithName:@"DMPasscode.bundle"];
-
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                         selector: @selector(handleEnteredBackground)
-                                             name: UIApplicationDidEnterBackgroundNotification
-                                           object: nil];
 }
 
 - (instancetype)init {
@@ -95,6 +90,11 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
 }
 
 - (void)showPasscodeInViewController:(UIViewController *)viewController completion:(PasscodeCompletionBlock)completion {
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(handleEnteredBackground)
+                                                 name: UIApplicationDidEnterBackgroundNotification
+                                               object: nil];
+
     NSAssert([self isPasscodeSet], @"No passcode set");
     _completion = completion;
     LAContext* context = [[LAContext alloc] init];
