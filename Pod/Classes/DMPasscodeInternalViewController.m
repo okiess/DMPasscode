@@ -89,7 +89,7 @@
     _input = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
     [_input setDelegate:self];
     [_input addTarget:self action:@selector(editingChanged:) forControlEvents:UIControlEventEditingChanged];
-    _input.keyboardType = UIKeyboardTypeNumberPad;
+    _input.keyboardType = UIKeyboardTypeNamePhonePad;
     _input.keyboardAppearance = _config.inputKeyboardAppearance;
     [self.view addSubview:_input];
     [_input becomeFirstResponder];
