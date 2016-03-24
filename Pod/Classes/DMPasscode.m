@@ -109,9 +109,11 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                             break;
                         case LAErrorSystemCancel:
                             // _completion(NO, nil);
+                            [self openPasscodeWithMode:1 viewController:viewController];
                             break;
                         case LAErrorAuthenticationFailed:
-                            _completion(NO, error);
+                            // _completion(NO, error);
+                            [self openPasscodeWithMode:1 viewController:viewController];
                             break;
                         case LAErrorPasscodeNotSet:
                         case LAErrorTouchIDNotEnrolled:
