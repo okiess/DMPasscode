@@ -71,7 +71,7 @@
     CGFloat y_padding = 140;
     CGFloat itemWidth = 24;
     CGFloat space = 20;
-    CGFloat totalWidth = (itemWidth * 6) + (space * 3);
+    CGFloat totalWidth = (itemWidth * 6) + (space * 5);
     CGFloat x_padding = (self.view.bounds.size.width - totalWidth) / 2;
 
     UIView *container = [[UIView alloc] initWithFrame:CGRectMake(x_padding, y_padding, totalWidth, itemWidth)];
