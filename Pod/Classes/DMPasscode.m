@@ -121,6 +121,8 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                             break;
                     }
                 } else {
+                   NSString *code = [[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME];
+                   [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
                     _completion(success, nil);
                 }
             });
