@@ -71,12 +71,12 @@
     CGFloat y_padding = 140;
     CGFloat itemWidth = 24;
     CGFloat space = 20;
-    CGFloat totalWidth = (itemWidth * 4) + (space * 3);
+    CGFloat totalWidth = (itemWidth * 6) + (space * 3);
     CGFloat x_padding = (self.view.bounds.size.width - totalWidth) / 2;
 
     UIView *container = [[UIView alloc] initWithFrame:CGRectMake(x_padding, y_padding, totalWidth, itemWidth)];
     container.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
         DMPasscodeInternalField* field = [[DMPasscodeInternalField alloc] initWithFrame:CGRectMake(((itemWidth + space) * i), 0, itemWidth, itemWidth) config:_config];
         UITapGestureRecognizer* singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
         [field addGestureRecognizer:singleFingerTap];
@@ -125,7 +125,7 @@
     }
 
     NSString* code = sender.text;
-    if (code.length == 4) {
+    if (code.length == 6) {
         [_delegate enteredCode:code];
     }
 }
