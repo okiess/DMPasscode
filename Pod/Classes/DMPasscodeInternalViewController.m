@@ -108,7 +108,7 @@
     NSUInteger rangeLength = range.length;
     NSUInteger newLength = oldLength - rangeLength + replacementLength;
     BOOL returnKey = [string rangeOfString: @"\n"].location != NSNotFound;
-    return newLength <= 4|| returnKey;
+    return newLength <= 6|| returnKey;
 }
 
 - (void)editingChanged:(UITextField *)sender {
@@ -119,7 +119,7 @@
         range.location = i;
         field.text = [sender.text substringWithRange:range];
     }
-    for (int i = (int)sender.text.length; i < 4; i++) {
+    for (int i = (int)sender.text.length; i < 6; i++) {
         DMPasscodeInternalField* field = [_textFields objectAtIndex:i];
         field.text = @"";
     }
