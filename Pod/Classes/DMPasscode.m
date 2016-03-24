@@ -175,7 +175,8 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
             [_passcodeViewController reset];
         } else if (_count == 1) {
             if ([code isEqualToString:_prevCode]) {
-                [[DMKeychain defaultKeychain] setObject:code forKey:KEYCHAIN_NAME];
+                [[DMKeychain defaultKeychain] setObject:code forKey:KEYCHAIN_NAME]; // TODO encrypt
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:code];
                 [self closeAndNotify:YES withError:nil];
             } else {
                 [_passcodeViewController setInstructions:NSLocalizedString(@"dmpasscode_enter_new_code", nil)];
@@ -187,6 +188,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
         }
     } else if (_mode == 1) {
         if ([code isEqualToString:[[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME]]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:code];
             [self closeAndNotify:YES withError:nil];
         }else {
             /*if (_count == 1) {
