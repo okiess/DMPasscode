@@ -10,6 +10,7 @@
 #import "DMPasscodeInternalNavigationController.h"
 #import "DMPasscodeInternalViewController.h"
 #import "DMKeychain.h"
+#import "AESCrypt.h"
 
 #ifdef __IPHONE_8_0
 #import <LocalAuthentication/LocalAuthentication.h>
@@ -123,7 +124,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                             break;
                     }
                 } else {
-                   NSString *code = [[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME];
+                   NSString *code = [[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME]; // TODO fix
                    [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
                     _completion(success, nil);
                 }
@@ -179,7 +180,9 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
             [_passcodeViewController reset];
         } else if (_count == 1) {
             if ([code isEqualToString:_prevCode]) {
-                [[DMKeychain defaultKeychain] setObject:code forKey:KEYCHAIN_NAME]; // TODO encrypt
+                NSString *mySecret = [AESCrypt encrypt:@"Secret" password:code];
+                [[DMKeychain defaultKeychain] setObject:mySecret forKey:@"PSKey"];
+                [[DMKeychain defaultKeychain] setObject:code forKey:KEYCHAIN_NAME]; // TODO remove
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
                 [self closeAndNotify:YES withError:nil];
             } else {
@@ -191,7 +194,8 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
             }
         }
     } else if (_mode == 1) {
-        if ([code isEqualToString:[[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME]]) {
+        NSString *mySecret = [AESCrypt encrypt:@"Secret" password:code];
+        if ([mySecret isEqualToString:[[DMKeychain defaultKeychain] objectForKey:mySecret]]) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
             [self closeAndNotify:YES withError:nil];
         }else {
