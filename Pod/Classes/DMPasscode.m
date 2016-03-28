@@ -186,11 +186,22 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
             [_passcodeViewController reset];
         } else if (_count == 1) {
             if ([code isEqualToString:_prevCode]) {
+              BOOL match = NO;
+              NSString *matchphrase = @"\d+";
+              NSPredicate *matchPred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", matchphrase];
+              if  ([matchPred evaluateWithObject:code]) {
                 NSString *uuidStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
                 NSString *mySecret = [AESCrypt encrypt:uuidStr password:code];
                 [[DMKeychain defaultKeychain] setObject:mySecret forKey:KEYCHAIN_NAME];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
                 [self closeAndNotify:YES withError:nil];
+              } else {
+                [_passcodeViewController setInstructions:NSLocalizedString(@"dmpasscode_enter_new_code", nil)];
+                [_passcodeViewController setErrorMessage:NSLocalizedString(@"dmpasscode_not_match", nil)];
+                [_passcodeViewController reset];
+                _count = 0;
+                return;
+              }
             } else {
                 [_passcodeViewController setInstructions:NSLocalizedString(@"dmpasscode_enter_new_code", nil)];
                 [_passcodeViewController setErrorMessage:NSLocalizedString(@"dmpasscode_not_match", nil)];
