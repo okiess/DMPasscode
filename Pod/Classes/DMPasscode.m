@@ -41,7 +41,6 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
     [super initialize];
     instance = [[DMPasscode alloc] init];
     bundle = [DMPasscode bundleWithName:@"DMPasscode.bundle"];
-    instance.forcePinEntry = NO;
 }
 
 - (instancetype)init {
