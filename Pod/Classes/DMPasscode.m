@@ -186,10 +186,9 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
             [_passcodeViewController reset];
         } else if (_count == 1) {
             if ([code isEqualToString:_prevCode]) {
-              BOOL match = NO;
-              NSString *matchphrase = @"\d+";
-              NSPredicate *matchPred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", matchphrase];
-              if  ([matchPred evaluateWithObject:code]) {
+              NSString *matchphrase1 = @"^([0-9]+[a-zA-Z]+|[a-zA-Z]+[0-9]+)[0-9a-zA-Z]*$";
+              NSPredicate *matchPred1 = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", matchphrase1];
+              if ([matchPred1 evaluateWithObject:code]) {
                 NSString *uuidStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
                 NSString *mySecret = [AESCrypt encrypt:uuidStr password:code];
                 [[DMKeychain defaultKeychain] setObject:mySecret forKey:KEYCHAIN_NAME];
