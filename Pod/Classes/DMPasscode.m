@@ -197,7 +197,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                 [self closeAndNotify:YES withError:nil];
               } else {
                 [_passcodeViewController setInstructions:NSLocalizedString(@"dmpasscode_enter_new_code", nil)];
-                [_passcodeViewController setErrorMessage:NSLocalizedString(@"dmpasscode_not_match", nil)];
+                [_passcodeViewController setErrorMessage:NSLocalizedString(@"dmpasscode_not_valid", nil)];
                 [_passcodeViewController reset];
                 _count = 0;
                 return;
