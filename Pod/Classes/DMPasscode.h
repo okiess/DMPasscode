@@ -40,6 +40,7 @@ typedef NS_ENUM(NSInteger, DMUnlockErrorCodes)
  *  @param completion     The completion block with a BOOL to inidcate if the authentication was successful (and NSError if not)
  */
 + (void)showPasscodeInViewController:(UIViewController *)viewController completion:(PasscodeCompletionBlock)completion;
++ (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force completion:(PasscodeCompletionBlock)completion;
 
 /**
  *  Remove the passcode from the keychain.

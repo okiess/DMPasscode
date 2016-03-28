@@ -35,12 +35,14 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
     int _count;
     NSString* _prevCode;
     DMPasscodeConfig* _config;
+    BOOL forcePinEntry;
 }
 
 + (void)initialize {
     [super initialize];
     instance = [[DMPasscode alloc] init];
     bundle = [DMPasscode bundleWithName:@"DMPasscode.bundle"];
+    instance.forcePinEntry = NO;
 }
 
 - (instancetype)init {
@@ -65,6 +67,12 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
 }
 
 + (void)showPasscodeInViewController:(UIViewController *)viewController completion:(PasscodeCompletionBlock)completion {
+    instance.forcePinEntry = NO;
+    [instance showPasscodeInViewController:viewController completion:completion];
+}
+
++ (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force completion:(PasscodeCompletionBlock)completion {
+    instance.forcePinEntry = YES;
     [instance showPasscodeInViewController:viewController completion:completion];
 }
 
