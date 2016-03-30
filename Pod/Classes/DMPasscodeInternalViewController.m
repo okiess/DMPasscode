@@ -91,6 +91,9 @@
     [_input addTarget:self action:@selector(editingChanged:) forControlEvents:UIControlEventEditingChanged];
     _input.keyboardType = UIKeyboardTypeNamePhonePad;
     _input.keyboardAppearance = _config.inputKeyboardAppearance;
+    _input.secureTextEntry = YES;
+    _input.autocorrectionType = UITextAutocorrectionTypeNo;
+    _input.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.view addSubview:_input];
     [_input becomeFirstResponder];
 }
