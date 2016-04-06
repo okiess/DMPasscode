@@ -103,6 +103,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
     NSAssert([self isPasscodeSet], @"No passcode set");
     _completion = completion;
     if (force) {
+      NSLog(@"Forcing pin entry!");
       [self openPasscodeWithMode:1 viewController:viewController];
     } else {
       LAContext* context = [[LAContext alloc] init];
@@ -112,14 +113,17 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                   if (error) {
                       switch (error.code) {
                           case LAErrorUserCancel:
+                              NSLog(@"LAErrorUserCancel");
                               // _completion(NO, nil);
                               [self openPasscodeWithMode:1 viewController:viewController];
                               break;
                           case LAErrorSystemCancel:
+                              NSLog(@"LAErrorSystemCancel");
                               // _completion(NO, nil);
-                              [self openPasscodeWithMode:1 viewController:viewController];
+                              // [self openPasscodeWithMode:1 viewController:viewController];
                               break;
                           case LAErrorAuthenticationFailed:
+                              NSLog(@"LAErrorAuthenticationFailed");
                               // _completion(NO, error);
                               [self openPasscodeWithMode:1 viewController:viewController];
                               break;
@@ -127,6 +131,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                           case LAErrorTouchIDNotEnrolled:
                           case LAErrorTouchIDNotAvailable:
                           case LAErrorUserFallback:
+                              NSLog(@"LAErrorUserFallback");
                               [self openPasscodeWithMode:1 viewController:viewController];
                               break;
                       }
@@ -136,6 +141,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
               });
           }];
       } else {
+          NSLog(@"No TouchId!");
           // no touch id available
           [self openPasscodeWithMode:1 viewController:viewController];
       }
