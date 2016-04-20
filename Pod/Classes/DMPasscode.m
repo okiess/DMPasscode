@@ -199,6 +199,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                 NSString *mySecret = [AESCrypt encrypt:uuidStr password:code];
                 [[DMKeychain defaultKeychain] setObject:mySecret forKey:KEYCHAIN_NAME];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"TouchIdAlert" object:self userInfo:nil];
                 [self closeAndNotify:YES withError:nil];
               } else {
                 [_passcodeViewController setInstructions:NSLocalizedString(@"dmpasscode_enter_new_code", nil)];
@@ -221,13 +222,14 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
         if ([theSecret isEqualToString:[[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME]]) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
             [self closeAndNotify:YES withError:nil];
-        }else {
+        } else {
             /*if (_count == 1) {
                 [_passcodeViewController setErrorMessage:NSLocalizedString(@"dmpasscode_1_left", nil)];
             } else {
                 [_passcodeViewController setErrorMessage:[NSString stringWithFormat:NSLocalizedString(@"dmpasscode_n_left", nil), 2 - _count]];
             }*/
             [_passcodeViewController setErrorMessage:NSLocalizedString(@"dmpasscode_0_left", nil)];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"PinEnterFailure" object:self userInfo:nil];
             [_passcodeViewController reset];
             /*if (_count >= 2) { // max 3 attempts
                 NSError *errorMatchingPins = [NSError errorWithDomain:DMUnlockErrorDomain code:DMErrorUnlocking userInfo:nil];
