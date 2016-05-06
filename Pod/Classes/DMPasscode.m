@@ -121,6 +121,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                               NSLog(@"LAErrorSystemCancel");
                               // _completion(NO, nil);
                               // [self openPasscodeWithMode:1 viewController:viewController];
+                              [[NSNotificationCenter defaultCenter] postNotificationName:@"TouchIdCancel" object:self userInfo:nil];
                               break;
                           case LAErrorAuthenticationFailed:
                               NSLog(@"LAErrorAuthenticationFailed");
