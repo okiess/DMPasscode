@@ -65,11 +65,15 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
 }
 
 + (void)showPasscodeInViewController:(UIViewController *)viewController completion:(PasscodeCompletionBlock)completion {
-    [instance showPasscodeInViewController:viewController forcePinEntry:NO completion:completion];
+    [instance showPasscodeInViewController:viewController forcePinEntry:NO reason:NSLocalizedString(@"dmpasscode_touchid_reason", nil) completion:completion];
 }
 
 + (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force completion:(PasscodeCompletionBlock)completion {
-    [instance showPasscodeInViewController:viewController forcePinEntry:force completion:completion];
+    [instance showPasscodeInViewController:viewController forcePinEntry:force reason:NSLocalizedString(@"dmpasscode_touchid_reason", nil) completion:completion];
+}
+
++ (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force reason:(NSString*)reason completion:(PasscodeCompletionBlock)completion {
+  [instance showPasscodeInViewController:viewController forcePinEntry:force reason:reason completion:completion];
 }
 
 + (void)removePasscode {
@@ -94,7 +98,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
   [self closeAndNotify:NO withError:nil];
 }
 
-- (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force completion:(PasscodeCompletionBlock)completion {
+- (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force reason:(NSString*)reason completion:(PasscodeCompletionBlock)completion {
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(handleEnteredBackground)
                                                  name: UIApplicationDidEnterBackgroundNotification
@@ -108,7 +112,7 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
     } else {
       LAContext* context = [[LAContext alloc] init];
       if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil]) {
-          [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:NSLocalizedString(@"dmpasscode_touchid_reason", nil) reply:^(BOOL success, NSError* error) {
+          [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:reason reply:^(BOOL success, NSError* error) {
               dispatch_async(dispatch_get_main_queue(), ^{
                   if (error) {
                       switch (error.code) {

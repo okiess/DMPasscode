@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, DMUnlockErrorCodes)
  */
 + (void)showPasscodeInViewController:(UIViewController *)viewController completion:(PasscodeCompletionBlock)completion;
 + (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force completion:(PasscodeCompletionBlock)completion;
++ (void)showPasscodeInViewController:(UIViewController *)viewController forcePinEntry:(BOOL)force reason:(NSString*)reason completion:(PasscodeCompletionBlock)completion;
 
 /**
  *  Remove the passcode from the keychain.
