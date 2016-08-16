@@ -17,4 +17,6 @@ Pod::Spec.new do |s|
 
   s.public_header_files = 'Pod/Classes/DMPasscode.h', 'Pod/Classes/DMPasscodeConfig.h'
   s.frameworks = 'UIKit', 'Security', 'LocalAuthentication'
+
+  s.dependency 'GRAESCrypt', '~> 1.0'
 end

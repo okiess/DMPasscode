@@ -9,4 +9,5 @@ target 'Tests', :exclusive => true do
   pod 'Expecta'
   pod 'FBSnapshotTestCase'
   pod 'Expecta+Snapshots'
+  pod 'GRAESCrypt', '~> 1.0'
 end
