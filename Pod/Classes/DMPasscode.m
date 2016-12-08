@@ -11,6 +11,7 @@
 #import "DMPasscodeInternalViewController.h"
 #import "DMKeychain.h"
 #import "AESCrypt.h"
+#import "NSData+CommonCrypto.h"
 
 #ifdef __IPHONE_8_0
 #import <LocalAuthentication/LocalAuthentication.h>
@@ -41,13 +42,24 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
     [super initialize];
     instance = [[DMPasscode alloc] init];
     bundle = [DMPasscode bundleWithName:@"DMPasscode.bundle"];
+
 }
 
 - (instancetype)init {
     if (self = [super init]) {
         _config = [[DMPasscodeConfig alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(deviceTokenSaved:)
+                                                     name:@"DeviceTokenSaved"
+                                                   object:nil];
     }
     return self;
+}
+
+- (void) deviceTokenSaved:(NSNotification *) notification {
+    if (notification != nil && notification.userInfo != nil && [notification.userInfo objectForKey:@"device_token"] != nil) {
+        _config.externalSecret = [notification.userInfo objectForKey:@"device_token"];
+    }
 }
 
 + (NSBundle*)bundleWithName:(NSString*)name {
@@ -141,7 +153,30 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
                               break;
                       }
                   } else {
-                      _completion(success, nil);
+                      if (_config.persistPin) {
+                          NSString *uuidStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+                          NSData *data = [uuidStr dataUsingEncoding:NSUTF8StringEncoding];
+                          NSData *dataSha256 = [data SHA256Hash];
+                          NSString* uuidSha256Str = [dataSha256 description];
+                          NSString *appInstallationId = [[NSUserDefaults standardUserDefaults] stringForKey:@"appInstallationId"];
+                          if (![appInstallationId isEqualToString:uuidSha256Str]) {
+                              [[NSNotificationCenter defaultCenter] postNotificationName:@"appInstallationIdChanged" object:nil];
+                          }
+                          NSString *secretPassword = [NSString stringWithFormat:@"%@%@", uuidStr, _config.externalSecret];
+                          NSString *encSecret = [[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME];
+                          NSString *mySecret = [AESCrypt decrypt:encSecret password:secretPassword];
+                          if (mySecret != nil) {
+                              [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": mySecret }];
+                              _completion(success, nil);
+                          } else {
+                              if (_config.externalSecret == nil) {
+                                  NSLog(@"No external secret set! Using fallback!");
+                              }
+                              [self openPasscodeWithMode:1 viewController:viewController];
+                          }
+                      } else {
+                          _completion(success, nil);
+                      }
                   }
               });
           }];
@@ -201,8 +236,19 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
               NSPredicate *matchPred1 = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", matchphrase1];
               if ([matchPred1 evaluateWithObject:code]) {
                 NSString *uuidStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-                NSString *mySecret = [AESCrypt encrypt:uuidStr password:code];
-                [[DMKeychain defaultKeychain] setObject:mySecret forKey:KEYCHAIN_NAME];
+                NSData *data = [uuidStr dataUsingEncoding:NSUTF8StringEncoding];
+                NSData *dataSha256 = [data SHA256Hash];
+                NSString* uuidSha256Str = [dataSha256 description];
+                [[NSUserDefaults standardUserDefaults] setObject:uuidSha256Str forKey:@"appInstallationId"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                if (_config.persistPin) {
+                    NSString *secretPassword = [NSString stringWithFormat:@"%@%@", uuidStr, _config.externalSecret];
+                    NSString *mySecret = [AESCrypt encrypt:code password:secretPassword];
+                    [[DMKeychain defaultKeychain] setObject:mySecret forKey:KEYCHAIN_NAME];
+                } else {
+                    NSString *mySecret = [AESCrypt encrypt:uuidStr password:code];
+                    [[DMKeychain defaultKeychain] setObject:mySecret forKey:KEYCHAIN_NAME];
+                }
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"TouchIdAlert" object:self userInfo:nil];
                 [self closeAndNotify:YES withError:nil];
@@ -223,8 +269,29 @@ NSString * const DMUnlockErrorDomain = @"com.dmpasscode.error.unlock";
         }
     } else if (_mode == 1) {
         NSString *uuidStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-        NSString *theSecret = [AESCrypt encrypt:uuidStr password:code];
-        if ([theSecret isEqualToString:[[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME]]) {
+        NSData *data = [uuidStr dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *dataSha256 = [data SHA256Hash];
+        NSString* uuidSha256Str = [dataSha256 description];
+        NSString *appInstallationId = [[NSUserDefaults standardUserDefaults] stringForKey:@"appInstallationId"];
+        if (![appInstallationId isEqualToString:uuidSha256Str]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"appInstallationIdChanged" object:nil];
+        }
+        bool valid = NO;
+        
+        if (_config.persistPin) {
+            NSString *secretPassword = [NSString stringWithFormat:@"%@%@", uuidStr, _config.externalSecret];
+            NSString *encSecret = [[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME];
+            NSString *mySecret = [AESCrypt decrypt:encSecret password:secretPassword];
+            if (mySecret == code) {
+                valid = YES;
+                code = mySecret;
+            }
+        } else {
+            NSString *theSecret = [AESCrypt encrypt:uuidStr password:code];
+            valid = [theSecret isEqualToString:[[DMKeychain defaultKeychain] objectForKey:KEYCHAIN_NAME]];
+        }
+        
+        if (valid) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"PinCode" object:self userInfo:@{ @"code": code }];
             [self closeAndNotify:YES withError:nil];
         } else {

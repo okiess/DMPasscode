@@ -93,4 +93,7 @@
 
 @property (nonatomic, strong) UIView * titleView;
 
+@property (nonatomic) BOOL persistPin;
+@property (nonatomic, strong) NSString * externalSecret;
+
 @end

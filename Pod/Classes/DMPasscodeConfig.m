@@ -29,6 +29,8 @@
         self.navigationBarFont = [UIFont systemFontOfSize:16];
         self.navigationBarTitleColor = [UIColor darkTextColor];
         self.titleView = nil;
+        self.persistPin = false;
+        self.externalSecret = @"";
     }
     return self;
 }
